@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "removeComments": true,
+    "strict": true,
+    "target": "ES6"
+  }
+}
