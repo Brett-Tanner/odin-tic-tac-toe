@@ -75,7 +75,7 @@ const board = (() => {
 
   const sameSymbol = (array: string[]) => {
     const isX = (string: string) => {
-      if (string === "X") {
+      if (string === "✕") {
         return true;
       } else {
         return false;
@@ -83,7 +83,7 @@ const board = (() => {
     };
 
     const isO = (string: string) => {
-      if (string === "O") {
+      if (string === "ⵔ") {
         return true;
       } else {
         return false;
@@ -101,15 +101,26 @@ const board = (() => {
 })();
 
 const game = (() => {
-  const players: player[] = [];
   let currentPlayer: player;
+  const players: player[] = [];
+  const startButton = document.getElementById("startButton");
 
   const addListeners = () => {
     const spaces = document.querySelectorAll(".space");
     spaces.forEach((space) => {
       if (space instanceof HTMLTableCellElement) {
         space.addEventListener("click", () => {
+          if (space.innerText !== "") {
+            return;
+          }
+
           space.innerText = currentPlayer.symbol;
+          if (over()) {
+            congratulate(currentPlayer.name);
+          } else {
+            currentPlayer =
+              currentPlayer === players[0] ? players[1] : players[0];
+          }
         });
       } else {
         throw new Error("At least one space isn't a table cell");
@@ -123,7 +134,7 @@ const game = (() => {
       playerOneInput instanceof HTMLInputElement
         ? playerOneInput?.value
         : "Player 1";
-    players[0] = playerFactory(playerOneName, Math.random() > 0.5 ? "X" : "O");
+    players[0] = playerFactory(playerOneName, Math.random() > 0.5 ? "✕" : "ⵔ");
     const playerTwoInput = document.getElementById("playerTwoName");
     const playerTwoName =
       playerTwoInput instanceof HTMLInputElement
@@ -131,7 +142,7 @@ const game = (() => {
         : "Player 2";
     players[1] = playerFactory(
       playerTwoName,
-      players[0].symbol == "X" ? "O" : "X"
+      players[0].symbol == "✕" ? "ⵔ" : "✕"
     );
 
     players.forEach((player) => {
@@ -152,7 +163,16 @@ const game = (() => {
   };
 
   const congratulate = (name: string) => {
-    alert(`Nice job ${name}, you win!`);
+    const resultDisplay = document.createElement("h1");
+    resultDisplay.innerText = `Nice job ${name}, you win!`;
+    resultDisplay.classList.add("congrats");
+    document.body.prepend(resultDisplay);
+    if (startButton) {
+      startButton.innerText = "Play Again?";
+      startButton.classList.remove("d-none");
+    } else {
+      throw new Error("Start button missing");
+    }
   };
 
   const over = () => {
@@ -164,8 +184,20 @@ const game = (() => {
   };
 
   const start = () => {
-    createPlayers();
-    addListeners();
+    if (players.length === 0) {
+      createPlayers();
+      addListeners();
+    } else {
+      const spaces = document.querySelectorAll(".space");
+      spaces.forEach((space) => {
+        if (space instanceof HTMLTableCellElement) {
+          space.innerText = "";
+        }
+      });
+      const congrats = document.querySelector(".congrats");
+      congrats?.remove();
+      startButton?.classList.add("d-none");
+    }
   };
 
   return { start };
@@ -174,7 +206,7 @@ const game = (() => {
 type coordinate = 1 | 2 | 3;
 
 interface mark {
-  symbol: "X" | "Y";
+  symbol: "✕" | "Y";
   x: coordinate;
   y: coordinate;
 }
@@ -185,10 +217,10 @@ const markFactory = (symbol: string, x: coordinate, y: coordinate) => {
 
 interface player {
   name: string;
-  symbol: "X" | "O";
+  symbol: "✕" | "ⵔ";
 }
 
-const playerFactory = (name: string, symbol: "X" | "O") => {
+const playerFactory = (name: string, symbol: "✕" | "ⵔ") => {
   return { name, symbol };
 };
 

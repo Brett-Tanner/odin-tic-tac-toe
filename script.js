@@ -77,7 +77,7 @@ const board = (() => {
     };
     const sameSymbol = (array) => {
         const isX = (string) => {
-            if (string === "X") {
+            if (string === "✕") {
                 return true;
             }
             else {
@@ -85,7 +85,7 @@ const board = (() => {
             }
         };
         const isO = (string) => {
-            if (string === "O") {
+            if (string === "ⵔ") {
                 return true;
             }
             else {
@@ -102,14 +102,25 @@ const board = (() => {
     return { addMark, colWin, diagWin, printBoard, rowWin };
 })();
 const game = (() => {
-    const players = [];
     let currentPlayer;
+    const players = [];
+    const startButton = document.getElementById("startButton");
     const addListeners = () => {
         const spaces = document.querySelectorAll(".space");
         spaces.forEach((space) => {
             if (space instanceof HTMLTableCellElement) {
                 space.addEventListener("click", () => {
+                    if (space.innerText !== "") {
+                        return;
+                    }
                     space.innerText = currentPlayer.symbol;
+                    if (over()) {
+                        congratulate(currentPlayer.name);
+                    }
+                    else {
+                        currentPlayer =
+                            currentPlayer === players[0] ? players[1] : players[0];
+                    }
                 });
             }
             else {
@@ -123,12 +134,12 @@ const game = (() => {
         const playerOneName = playerOneInput instanceof HTMLInputElement
             ? playerOneInput === null || playerOneInput === void 0 ? void 0 : playerOneInput.value
             : "Player 1";
-        players[0] = playerFactory(playerOneName, Math.random() > 0.5 ? "X" : "O");
+        players[0] = playerFactory(playerOneName, Math.random() > 0.5 ? "✕" : "ⵔ");
         const playerTwoInput = document.getElementById("playerTwoName");
         const playerTwoName = playerTwoInput instanceof HTMLInputElement
             ? playerTwoInput === null || playerTwoInput === void 0 ? void 0 : playerTwoInput.value
             : "Player 2";
-        players[1] = playerFactory(playerTwoName, players[0].symbol == "X" ? "O" : "X");
+        players[1] = playerFactory(playerTwoName, players[0].symbol == "✕" ? "ⵔ" : "✕");
         players.forEach((player) => {
             const playerInfoDiv = document.getElementById(`p${players.indexOf(player) + 1}Info`);
             playerInfoDiv.innerHTML = "";
@@ -143,7 +154,17 @@ const game = (() => {
         currentPlayer = players[0];
     };
     const congratulate = (name) => {
-        alert(`Nice job ${name}, you win!`);
+        const resultDisplay = document.createElement("h1");
+        resultDisplay.innerText = `Nice job ${name}, you win!`;
+        resultDisplay.classList.add("congrats");
+        document.body.prepend(resultDisplay);
+        if (startButton) {
+            startButton.innerText = "Play Again?";
+            startButton.classList.remove("d-none");
+        }
+        else {
+            throw new Error("Start button missing");
+        }
     };
     const over = () => {
         if (board.rowWin() || board.colWin() || board.diagWin()) {
@@ -154,8 +175,21 @@ const game = (() => {
         }
     };
     const start = () => {
-        createPlayers();
-        addListeners();
+        if (players.length === 0) {
+            createPlayers();
+            addListeners();
+        }
+        else {
+            const spaces = document.querySelectorAll(".space");
+            spaces.forEach((space) => {
+                if (space instanceof HTMLTableCellElement) {
+                    space.innerText = "";
+                }
+            });
+            const congrats = document.querySelector(".congrats");
+            congrats === null || congrats === void 0 ? void 0 : congrats.remove();
+            startButton === null || startButton === void 0 ? void 0 : startButton.classList.add("d-none");
+        }
     };
     return { start };
 })();
