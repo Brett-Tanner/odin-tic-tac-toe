@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 const board = (() => {
     const marks = [];
     const addMark = (mark) => {
@@ -102,6 +103,20 @@ const board = (() => {
 })();
 const game = (() => {
     const players = [];
+    let currentPlayer;
+    const addListeners = () => {
+        const spaces = document.querySelectorAll(".space");
+        spaces.forEach((space) => {
+            if (space instanceof HTMLTableCellElement) {
+                space.addEventListener("click", () => {
+                    space.innerText = currentPlayer.symbol;
+                });
+            }
+            else {
+                throw new Error("At least one space isn't a table cell");
+            }
+        });
+    };
     const createPlayers = () => {
         var _a;
         const playerOneInput = document.getElementById("playerOneName");
@@ -125,6 +140,7 @@ const game = (() => {
             playerInfoDiv === null || playerInfoDiv === void 0 ? void 0 : playerInfoDiv.appendChild(playerSymbol);
         });
         (_a = document.getElementById("startButton")) === null || _a === void 0 ? void 0 : _a.classList.add("d-none");
+        currentPlayer = players[0];
     };
     const congratulate = (name) => {
         alert(`Nice job ${name}, you win!`);
@@ -139,6 +155,7 @@ const game = (() => {
     };
     const start = () => {
         createPlayers();
+        addListeners();
     };
     return { start };
 })();
@@ -148,3 +165,4 @@ const markFactory = (symbol, x, y) => {
 const playerFactory = (name, symbol) => {
     return { name, symbol };
 };
+(_a = document.getElementById("startButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", game.start);

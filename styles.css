@@ -1,4 +1,5 @@
 :root {
+  box-sizing: border-box;
   --spacer: 1rem;
 }
 
@@ -35,8 +36,11 @@ body {
 }
 
 table {
+  table-layout: fixed;
+  text-align: center;
   width: 40vw;
   height: 40vw;
+  border-collapse: collapse;
 }
 
 @media (max-width: 750px) {
@@ -47,5 +51,7 @@ table {
 }
 
 table td {
+  width: 33%;
+  height: 33%;
   border: 1px solid black;
 }

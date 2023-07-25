@@ -102,6 +102,20 @@ const board = (() => {
 
 const game = (() => {
   const players: player[] = [];
+  let currentPlayer: player;
+
+  const addListeners = () => {
+    const spaces = document.querySelectorAll(".space");
+    spaces.forEach((space) => {
+      if (space instanceof HTMLTableCellElement) {
+        space.addEventListener("click", () => {
+          space.innerText = currentPlayer.symbol;
+        });
+      } else {
+        throw new Error("At least one space isn't a table cell");
+      }
+    });
+  };
 
   const createPlayers = () => {
     const playerOneInput = document.getElementById("playerOneName");
@@ -134,6 +148,7 @@ const game = (() => {
     });
 
     document.getElementById("startButton")?.classList.add("d-none");
+    currentPlayer = players[0];
   };
 
   const congratulate = (name: string) => {
@@ -150,6 +165,7 @@ const game = (() => {
 
   const start = () => {
     createPlayers();
+    addListeners();
   };
 
   return { start };
@@ -175,3 +191,5 @@ interface player {
 const playerFactory = (name: string, symbol: "X" | "O") => {
   return { name, symbol };
 };
+
+document.getElementById("startButton")?.addEventListener("click", game.start);
