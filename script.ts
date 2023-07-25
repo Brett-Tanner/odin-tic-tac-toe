@@ -101,19 +101,39 @@ const board = (() => {
 })();
 
 const game = (() => {
-  let playerOne;
-  let playerTwo;
+  const players: player[] = [];
 
   const createPlayers = () => {
-    const playerOneName: string =
-      document.getElementById("p1name")?.innerText || "Player 1";
-    playerOne = playerFactory(playerOneName, Math.random() > 0.5 ? "X" : "O");
-    const playerTwoName: string =
-      document.getElementById("p2name")?.innerText || "Player 2";
-    playerTwo = playerFactory(
+    const playerOneInput = document.getElementById("playerOneName");
+    const playerOneName =
+      playerOneInput instanceof HTMLInputElement
+        ? playerOneInput?.value
+        : "Player 1";
+    players[0] = playerFactory(playerOneName, Math.random() > 0.5 ? "X" : "O");
+    const playerTwoInput = document.getElementById("playerTwoName");
+    const playerTwoName =
+      playerTwoInput instanceof HTMLInputElement
+        ? playerTwoInput?.value
+        : "Player 2";
+    players[1] = playerFactory(
       playerTwoName,
-      playerOne.symbol == "X" ? "O" : "X"
+      players[0].symbol == "X" ? "O" : "X"
     );
+
+    players.forEach((player) => {
+      const playerInfoDiv = document.getElementById(
+        `p${players.indexOf(player) + 1}Info`
+      );
+      playerInfoDiv!.innerHTML = "";
+      const playerName = document.createElement("h4");
+      playerName.innerText = player.name;
+      playerInfoDiv?.appendChild(playerName);
+      const playerSymbol = document.createElement("p");
+      playerSymbol.innerText = player.symbol;
+      playerInfoDiv?.appendChild(playerSymbol);
+    });
+
+    document.getElementById("startButton")?.classList.add("d-none");
   };
 
   const congratulate = (name: string) => {
@@ -146,6 +166,11 @@ interface mark {
 const markFactory = (symbol: string, x: coordinate, y: coordinate) => {
   return { symbol, x };
 };
+
+interface player {
+  name: string;
+  symbol: "X" | "O";
+}
 
 const playerFactory = (name: string, symbol: "X" | "O") => {
   return { name, symbol };

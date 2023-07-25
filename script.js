@@ -101,14 +101,30 @@ const board = (() => {
     return { addMark, colWin, diagWin, printBoard, rowWin };
 })();
 const game = (() => {
-    let playerOne;
-    let playerTwo;
+    const players = [];
     const createPlayers = () => {
-        var _a, _b;
-        const playerOneName = ((_a = document.getElementById("p1name")) === null || _a === void 0 ? void 0 : _a.innerText) || "Player 1";
-        playerOne = playerFactory(playerOneName, Math.random() > 0.5 ? "X" : "O");
-        const playerTwoName = ((_b = document.getElementById("p2name")) === null || _b === void 0 ? void 0 : _b.innerText) || "Player 2";
-        playerTwo = playerFactory(playerTwoName, playerOne.symbol == "X" ? "O" : "X");
+        var _a;
+        const playerOneInput = document.getElementById("playerOneName");
+        const playerOneName = playerOneInput instanceof HTMLInputElement
+            ? playerOneInput === null || playerOneInput === void 0 ? void 0 : playerOneInput.value
+            : "Player 1";
+        players[0] = playerFactory(playerOneName, Math.random() > 0.5 ? "X" : "O");
+        const playerTwoInput = document.getElementById("playerTwoName");
+        const playerTwoName = playerTwoInput instanceof HTMLInputElement
+            ? playerTwoInput === null || playerTwoInput === void 0 ? void 0 : playerTwoInput.value
+            : "Player 2";
+        players[1] = playerFactory(playerTwoName, players[0].symbol == "X" ? "O" : "X");
+        players.forEach((player) => {
+            const playerInfoDiv = document.getElementById(`p${players.indexOf(player) + 1}Info`);
+            playerInfoDiv.innerHTML = "";
+            const playerName = document.createElement("h4");
+            playerName.innerText = player.name;
+            playerInfoDiv === null || playerInfoDiv === void 0 ? void 0 : playerInfoDiv.appendChild(playerName);
+            const playerSymbol = document.createElement("p");
+            playerSymbol.innerText = player.symbol;
+            playerInfoDiv === null || playerInfoDiv === void 0 ? void 0 : playerInfoDiv.appendChild(playerSymbol);
+        });
+        (_a = document.getElementById("startButton")) === null || _a === void 0 ? void 0 : _a.classList.add("d-none");
     };
     const congratulate = (name) => {
         alert(`Nice job ${name}, you win!`);

@@ -11,6 +11,10 @@ body {
   min-height: 100dvh;
 }
 
+.d-none {
+  display: none;
+}
+
 .scoreboard {
   display: flex;
   align-items: center;
