@@ -104,6 +104,7 @@ const board = (() => {
 const game = (() => {
     let currentPlayer;
     const players = [];
+    let round = 0;
     const startButton = document.getElementById("startButton");
     const addListeners = () => {
         const spaces = document.querySelectorAll(".space");
@@ -114,7 +115,11 @@ const game = (() => {
                         return;
                     }
                     space.innerText = currentPlayer.symbol;
-                    if (over()) {
+                    round++;
+                    if (round === 9) {
+                        congratulate("draw");
+                    }
+                    else if (over()) {
                         congratulate(currentPlayer.name);
                     }
                     else {
@@ -155,7 +160,8 @@ const game = (() => {
     };
     const congratulate = (name) => {
         const resultDisplay = document.createElement("h1");
-        resultDisplay.innerText = `Nice job ${name}, you win!`;
+        resultDisplay.innerText =
+            name === "draw" ? "Oh no, it's a draw!" : `Nice job ${name}, you win!`;
         resultDisplay.classList.add("congrats");
         document.body.prepend(resultDisplay);
         if (startButton) {
@@ -187,6 +193,7 @@ const game = (() => {
                 }
             });
             const congrats = document.querySelector(".congrats");
+            round = 0;
             congrats === null || congrats === void 0 ? void 0 : congrats.remove();
             startButton === null || startButton === void 0 ? void 0 : startButton.classList.add("d-none");
         }
